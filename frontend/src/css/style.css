@@ -292,3 +292,9 @@ textarea {
   background-color: inherit;
   border: none;
 }
+
+.geolocation__send {
+  border: none;
+  font-size: larger;
+  cursor: pointer;
+}

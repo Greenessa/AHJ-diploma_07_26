@@ -14,6 +14,7 @@ export default class MessageForm {
     this.buttonLoadMore = document.querySelector('.messages__load-more');
     this.favoriteEl = document.querySelector('.favorite');
     this.chatEl = document.querySelector('.chat-button');
+    this.geolocationSendEl = document.querySelector('.geolocation__send');
 
     this.limit = 3;
     this.offset = 0;
@@ -23,6 +24,20 @@ export default class MessageForm {
   }
 
   registerEvents() {
+
+    this.geolocationSendEl.addEventListener('click', () => {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            console.log(pos.coords);
+            // console.log(new Date(pos.timestamp).toLocaleString());
+            const position = ` Моя текущая позиция: lat: ${pos.coords.latitude} long: ${pos.coords.longitude}`;
+            const result = await this.createTextMessage(position);
+            this.messagesState.renderMessages(result.messages);
+            this.offset += result.messages.length;
+            this.updateLoadMoreButton();
+        })
+        
+
+    });
 
     this.chatEl.addEventListener('click', async () => {
         this.offset = 0;
