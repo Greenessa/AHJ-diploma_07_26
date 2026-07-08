@@ -13,9 +13,10 @@ export default class MessageForm {
     this.messagesEl = document.querySelector('.messages');
     this.buttonLoadMore = document.querySelector('.messages__load-more');
     this.favoriteEl = document.querySelector('.favorite');
+    this.pinnedEl = document.querySelector('.pinned-message');
     this.chatEl = document.querySelector('.chat-button');
     this.geolocationSendEl = document.querySelector('.geolocation__send');
-
+    this.pinnedId;
     this.limit = 3;
     this.offset = 0;
     this.hasMore = true;
@@ -53,6 +54,8 @@ export default class MessageForm {
       
         this.updateLoadMoreButton();
       });
+
+    
 
     this.favoriteEl.addEventListener('click', async () => {
         const result = await this.getFavoriteMessages();
@@ -105,7 +108,7 @@ export default class MessageForm {
         if (!event.target.classList.contains('message__favorite')) {
             return;
         }
-    
+        
         const id = event.target.dataset.id;
         const toggleButtonEl = event.target;
     
@@ -113,6 +116,34 @@ export default class MessageForm {
     
         toggleButtonEl.textContent = updatedMessage.favorite ? '⭐' : '☆';
     });
+
+    this.messagesEl.addEventListener('click', async (event) => {
+        if (!event.target.classList.contains('message__pin')) {
+          return;
+        }
+      
+        const id = event.target.dataset.id;
+        const toggleButtonEl = event.target;
+      
+        const updatedMessage = await this.togglePinned(id);
+      
+        document.querySelectorAll('.message__pin').forEach((button) => {
+          button.textContent = '📌❌';
+        });
+      
+        if (updatedMessage.pinned) {
+          this.pinnedId = id;
+          this.renderPinnedMessage(updatedMessage);
+      
+          toggleButtonEl.textContent = '📌';
+        } else {
+          this.pinnedId = null;
+          this.removePinnedMessage();
+      
+          toggleButtonEl.textContent = '📌❌';
+        }
+      });
+
   }
 
   async loadApp() {
@@ -195,6 +226,15 @@ export default class MessageForm {
     return response.json();
   }
 
+   async getPinnedMessage() {
+    const response = await fetch(`${this.BASE_URL}/pinned`);
+    if (!response.ok) {
+        throw new Error('Не удалось загрузить закреплённое сообщение');
+      }
+  
+      return response.json();
+  }
+
   async getFavoriteMessages() {
     const response = await fetch(`${this.BASE_URL}/favorite`);
 
@@ -238,6 +278,21 @@ export default class MessageForm {
     return response.json();
   }
 
+  async togglePinned(id) {
+    const response = await fetch(
+        `${this.BASE_URL}/messages/${id}/pinned`,
+        {
+          method: 'PATCH',
+        }
+      );
+    
+      if (!response.ok) {
+        throw new Error('Не удалось изменить закрепление');
+      }
+    
+      return response.json();
+  }
+
   async uploadFile(file) {
     const formData = new FormData();
 
@@ -262,4 +317,28 @@ export default class MessageForm {
       this.buttonLoadMore.style.display = 'none';
     }
   }
+
+  renderPinnedMessage(message) {
+    const pinnedText = document.querySelector(".pinned-message__text");
+    const contentEl = this.messagesState.createContent(message);
+    
+    if (message.text) {
+        pinnedText.textContent = message.text; 
+    } else {
+        pinnedText.textContent = message.type;
+        contentEl.classList.add('exist');
+        this.pinnedEl.append(contentEl);
+    }
+    
+    }
+
+    removePinnedMessage() {
+        const pinnedText = document.querySelector(".pinned-message__text");
+        pinnedText.textContent = 'Здесь будет закреплённое сообщение';
+        const contentEl = document.querySelector('.exist');
+        if (contentEl) {
+            contentEl.remove();
+        }
+        
+    }
 }

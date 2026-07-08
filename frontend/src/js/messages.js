@@ -29,6 +29,7 @@ export default class Messages {
       const messageEl = this.createMessageElement(message);
       this.messagesEl.append(messageEl);
     }
+
   
     createMessageElement(message) {
       const messageEl = document.createElement('article');
@@ -53,7 +54,11 @@ export default class Messages {
       favoriteButton.textContent = message.favorite ? '⭐' : '☆';
       favoriteButton.type = 'button';
       favoriteButton.dataset.id = message.id;
-      messageEl.append(favoriteButton);
+      const pinButton = document.createElement('button');
+        pinButton.classList.add('message__pin');
+        pinButton.dataset.id = message.id;
+        pinButton.textContent = message.pinned ? '📌' : '📌❌';
+      messageEl.append(favoriteButton, pinButton);
   
       return messageEl;
     }

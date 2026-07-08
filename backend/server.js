@@ -110,6 +110,16 @@ app.use(async (ctx) => {
     return;
   }
 
+  if (ctx.method === 'GET' && ctx.path === '/pinned') {
+
+    const pinnedMessage = messages.find(function(message) {
+        return message.pinned === true; 
+      });
+    //   console.log(pinnedMessage);
+    ctx.body = pinnedMessage;
+    return;
+  }
+
   if (ctx.method === 'POST' && ctx.path === '/messages') {
     const { text } = ctx.request.body;
 
@@ -194,6 +204,23 @@ app.use(async (ctx) => {
     }
     
     message.favorite = !message.favorite;
+  
+    ctx.body = message;
+    return;
+  }
+
+  if (ctx.method === 'PATCH' && ctx.path.endsWith('/pinned')) {
+    const id = ctx.path.split('/')[2];
+  
+    const message = messages.find((item) => item.id === id);
+  
+    if (!message) {
+      ctx.status = 404;
+      ctx.body = { error: 'Сообщение не найдено' };
+      return;
+    }
+    
+    message.pinned = !message.pinned;
   
     ctx.body = message;
     return;
