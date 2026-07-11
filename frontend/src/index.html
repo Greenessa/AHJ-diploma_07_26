@@ -33,10 +33,10 @@
       <nav class="sidebar__menu">
         <button class="sidebar__button chat-button active">Чат</button>
         <button class="sidebar__button favorite">Избранное</button>
-        <button class="sidebar__button">Изображения</button>
-        <button class="sidebar__button">Видео</button>
-        <button class="sidebar__button">Аудио</button>
-        <button class="sidebar__button">Файлы</button>
+        <button class="sidebar__button image">Изображения</button>
+        <button class="sidebar__button video">Видео</button>
+        <button class="sidebar__button audio">Аудио</button>
+        <button class="sidebar__button file">Файлы</button>
       </nav>
     </aside>
 
@@ -68,8 +68,20 @@
           Загрузить предыдущие сообщения
         </button>
       </section>
+      <div class="emoji-panel hidden">
+        <span class="emoji">😊</span>
+        <span class="emoji">😀</span>
+        <span class="emoji">😂</span>
+        <span class="emoji">😍</span>
+        <span class="emoji">👍</span>
+        <span class="emoji">❤️</span>
+        <span class="emoji">😢</span>
+        <span class="emoji">🎉</span>
+      </div>
 
       <form class="message-form">
+        
+        <button class="emoji-button" type="button">😊</button>
 
         <button
           class="geolocation__send"
@@ -80,6 +92,7 @@
         <label class="message-form__file">
 
           📎
+          
 
           <input
             class="message-form__file-input"

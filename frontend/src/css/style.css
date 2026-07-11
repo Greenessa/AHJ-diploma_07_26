@@ -303,3 +303,18 @@ textarea {
   font-size: larger;
   cursor: pointer;
 }
+
+.emoji-button {
+  border: none;
+  font-size: larger;
+  cursor: pointer;
+}
+
+.emoji {
+  font-size: larger;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}

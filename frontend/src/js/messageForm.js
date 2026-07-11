@@ -7,12 +7,18 @@ export default class MessageForm {
     this.messagesState = new Messages();
 
     this.formEl = document.querySelector('.message-form');
+    this.emojiPanelEl = document.querySelector('.emoji-panel');
     this.fileInputEl = document.querySelector('.message-form__file-input');
     this.messageInputEl = document.querySelector('.message-form__input');
     this.messageSendEl = document.querySelector('.message-form__send');
     this.messagesEl = document.querySelector('.messages');
     this.buttonLoadMore = document.querySelector('.messages__load-more');
+    this.buttonEmoji = document.querySelector('.emoji-button');
     this.favoriteEl = document.querySelector('.favorite');
+    this.imageEl = document.querySelector('.image');
+    this.videoEl = document.querySelector('.video');
+    this.audioEl = document.querySelector('.audio');
+    this.fileEl = document.querySelector('.file');
     this.pinnedEl = document.querySelector('.pinned-message');
     this.chatEl = document.querySelector('.chat-button');
     this.geolocationSendEl = document.querySelector('.geolocation__send');
@@ -36,9 +42,22 @@ export default class MessageForm {
             this.offset += result.messages.length;
             this.updateLoadMoreButton();
         })
-        
-
+    
     });
+
+    this.buttonEmoji.addEventListener('click', () => {
+        this.emojiPanelEl.classList.toggle('hidden');
+    });
+
+    this.emojiPanelEl.addEventListener('click', (event) => {
+        if (!event.target.classList.contains('emoji')) {
+            return;
+        }
+        this.emojiPanelEl.classList.add('hidden');
+        const textEmoji = event.target.textContent;
+        this.messageInputEl.value += textEmoji;
+        
+    })
 
     this.chatEl.addEventListener('click', async () => {
         this.offset = 0;
@@ -55,7 +74,37 @@ export default class MessageForm {
         this.updateLoadMoreButton();
       });
 
-    
+      this.imageEl.addEventListener('click', async () => {
+        const result = await this.getImageMessages();
+        // console.log(result.messages);
+        this.messagesState.clearMessages();
+        this.buttonLoadMore.style.display = 'none'
+        this.messagesState.renderMessages(result.messages);
+      });
+
+      this.videoEl.addEventListener('click', async () => {
+        const result = await this.getVideoMessages();
+        // console.log(result.messages);
+        this.messagesState.clearMessages();
+        this.buttonLoadMore.style.display = 'none'
+        this.messagesState.renderMessages(result.messages);
+      });
+
+      this.audioEl.addEventListener('click', async () => {
+        const result = await this.getAudioMessages();
+        // console.log(result.messages);
+        this.messagesState.clearMessages();
+        this.buttonLoadMore.style.display = 'none'
+        this.messagesState.renderMessages(result.messages);
+      });
+
+      this.fileEl.addEventListener('click', async () => {
+        const result = await this.getFileMessages();
+        // console.log(result.messages);
+        this.messagesState.clearMessages();
+        this.buttonLoadMore.style.display = 'none'
+        this.messagesState.renderMessages(result.messages);
+      });
 
     this.favoriteEl.addEventListener('click', async () => {
         const result = await this.getFavoriteMessages();
@@ -154,6 +203,12 @@ export default class MessageForm {
     this.hasMore = result.hasMore;
 
     this.updateLoadMoreButton();
+    const pinned = result.messages.find((message) => {
+        return message.pinned
+    })
+    if (pinned) {
+        this.renderPinnedMessage(pinned);
+    }
   }
 
   async loadOldMessages() {
@@ -245,7 +300,46 @@ export default class MessageForm {
     return response.json();
   }
 
+  async getImageMessages() {
+    const response = await fetch(`${this.BASE_URL}/image`);
 
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить сообщения');
+    }
+
+    return response.json();
+  }
+
+  
+  async getVideoMessages() {
+    const response = await fetch(`${this.BASE_URL}/video`);
+
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить сообщения');
+    }
+
+    return response.json();
+  }
+
+  async getAudioMessages() {
+    const response = await fetch(`${this.BASE_URL}/audio`);
+
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить сообщения');
+    }
+
+    return response.json();
+  }
+
+  async getFileMessages() {
+    const response = await fetch(`${this.BASE_URL}/file`);
+
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить сообщения');
+    }
+
+    return response.json();
+  }
 
   async createTextMessage(text) {
     const response = await fetch(`${this.BASE_URL}/messages`, {

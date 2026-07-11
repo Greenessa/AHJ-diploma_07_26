@@ -110,6 +110,51 @@ app.use(async (ctx) => {
     return;
   }
 
+  if (ctx.method === 'GET' && ctx.path === '/image') {
+
+    const imageArray = messages.filter(function(message) {
+        return message.type === 'image'; 
+      });
+    ctx.body = {
+      messages: imageArray,
+    };
+    return;
+  }
+
+  if (ctx.method === 'GET' && ctx.path === '/video') {
+
+    const array = messages.filter(function(message) {
+        return message.type === 'video'; 
+      });
+    ctx.body = {
+      messages: array,
+    };
+    return;
+  }
+
+  if (ctx.method === 'GET' && ctx.path === '/audio') {
+
+    const array = messages.filter(function(message) {
+        return message.type === 'audio'; 
+      });
+    ctx.body = {
+      messages: array,
+    };
+    return;
+  }
+
+  if (ctx.method === 'GET' && ctx.path === '/file') {
+
+    const array = messages.filter(function(message) {
+        return message.fileName; 
+      });
+    ctx.body = {
+      messages: array,
+    };
+    return;
+  }
+
+
   if (ctx.method === 'GET' && ctx.path === '/pinned') {
 
     const pinnedMessage = messages.find(function(message) {
